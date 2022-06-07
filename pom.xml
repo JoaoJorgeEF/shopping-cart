@@ -40,7 +40,8 @@
         <!--HAL REST Browser -->
         <dependency>
             <groupId>org.springframework.data</groupId>
-            <artifactId>spring-data-rest-hal-browser</artifactId>
+            <artifactId>spring-data-rest-hal-explorer</artifactId>
+            <version>3.2.0.RELEASE</version>
         </dependency>
 
         <!-- Spring Security -->
