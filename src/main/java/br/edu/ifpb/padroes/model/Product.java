@@ -1,5 +1,7 @@
 package br.edu.ifpb.padroes.model;
 
+import br.edu.ifpb.padroes.service.visitor.Visitor;
+import ch.qos.logback.classic.ViewStatusMessagesServlet;
 import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
@@ -72,6 +74,8 @@ public abstract class Product {
     public void setPrice(BigDecimal unitPrice) {
         this.price = unitPrice;
     }
+
+    public abstract BigDecimal accept(Visitor visitor);
 
     @Override
     public boolean equals(Object o) {

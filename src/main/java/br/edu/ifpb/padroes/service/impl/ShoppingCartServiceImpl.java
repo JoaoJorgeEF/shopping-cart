@@ -87,8 +87,13 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     @Override
     public BigDecimal getTotalDiscount() {
         return
-                products.keySet().stream().filter(Book.class::isInstance).map(product -> product.getPrice().multiply(BOOK_DISCOUNT).multiply(BigDecimal.valueOf(products.get(product)))).reduce(BigDecimal::add).orElse(BigDecimal.ZERO)
-                        .add(products.keySet().stream().filter(Electronic.class::isInstance).map(product -> product.getPrice().multiply(ELECTRONIC_DISCOUNT).multiply(BigDecimal.valueOf(products.get(product)))).reduce(BigDecimal::add).orElse(BigDecimal.ZERO));
+                products.keySet().stream().filter(Book.class::isInstance)
+                        .map(product -> product.getPrice().multiply(BOOK_DISCOUNT)
+                        .multiply(BigDecimal.valueOf(products.get(product))))
+                        .reduce(BigDecimal::add).orElse(BigDecimal.ZERO)
+                        .add(products.keySet().stream().filter(Electronic.class::isInstance)
+                        .map(product -> product.getPrice().multiply(ELECTRONIC_DISCOUNT)
+                        .multiply(BigDecimal.valueOf(products.get(product)))).reduce(BigDecimal::add).orElse(BigDecimal.ZERO));
     }
 
     /**
