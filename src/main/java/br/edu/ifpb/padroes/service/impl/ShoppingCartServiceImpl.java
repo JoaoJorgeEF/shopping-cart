@@ -6,6 +6,7 @@ import br.edu.ifpb.padroes.model.Electronic;
 import br.edu.ifpb.padroes.model.Product;
 import br.edu.ifpb.padroes.repository.ProductRepository;
 import br.edu.ifpb.padroes.service.ShoppingCartService;
+import br.edu.ifpb.padroes.service.visitor.VisitorDiscount;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
@@ -14,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -30,9 +32,6 @@ import java.util.Map;
 public class ShoppingCartServiceImpl implements ShoppingCartService {
 
     private final ProductRepository productRepository;
-
-    private static final BigDecimal BOOK_DISCOUNT = BigDecimal.valueOf(0.3); // 30 %
-    private static final BigDecimal ELECTRONIC_DISCOUNT = BigDecimal.valueOf(0.05); // 5 %
 
     private Map<Product, Integer> products = new HashMap<>();
 
@@ -86,14 +85,17 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
      */
     @Override
     public BigDecimal getTotalDiscount() {
-        return
-                products.keySet().stream().filter(Book.class::isInstance)
-                        .map(product -> product.getPrice().multiply(BOOK_DISCOUNT)
-                        .multiply(BigDecimal.valueOf(products.get(product))))
-                        .reduce(BigDecimal::add).orElse(BigDecimal.ZERO)
-                        .add(products.keySet().stream().filter(Electronic.class::isInstance)
-                        .map(product -> product.getPrice().multiply(ELECTRONIC_DISCOUNT)
-                        .multiply(BigDecimal.valueOf(products.get(product)))).reduce(BigDecimal::add).orElse(BigDecimal.ZERO));
+
+        VisitorDiscount visitor = new VisitorDiscount();
+
+        ArrayList<Product> p = new ArrayList<>();
+        for(Map.Entry<Product, Integer> entry: products.entrySet()){
+            for(int i = 0; i < entry.getValue(); i++){
+                p.add(entry.getKey());
+            }
+        }
+
+        return visitor.getTotal(p.toArray(new Product[0]));
     }
 
     /**
